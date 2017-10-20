@@ -43,12 +43,15 @@ def importLogFiles(fileName):
     
 total = 0
 nxtPress= 0
+if importLogFiles("nxtpress") > 0:
+    likeNames = importLogFiles("likeNames")
 likeNames={}
 if len(importLogFiles("likeNames")) > 0:
     likeNames = importLogFiles("likeNames")
 tagLikes={}
 if len(importLogFiles("tagLikes")) > 0:
     tagLikes = json.load(open("tagLikes.txt","r"))
+    
 
 total = sum(likeNames.values())
 
@@ -106,6 +109,7 @@ def liker(total = total, nxtPress = nxtPress):
 
     tottemp= total
     nxtpresstemp = nxtPress
+    runs= 0
     while tottemp - total < random.randrange(20, 30):
         name = driver.find_element_by_class_name("_eeohz").text
         likeNames.setdefault(name,0)
@@ -141,19 +145,29 @@ def liker(total = total, nxtPress = nxtPress):
     print("Total likes:" , total,"\n","Total next", nxtPress)
     for i in likeNames:
         print(i,":", likeNames[i])
+    runs += 1
     tSleep = random.randrange(600, 950)
     print("sleeping for", tSleep/60 ,"min")
     
     time.sleep(tSleep)
-    print("resuming")
-    liker(total, nxtPress)
+    while runs < 4:
+        print("resuming")
+        liker(total, nxtPress)
+        if runs == 3:
+            run= input("do you want to continue? Y/N")
+            if run.lower() == "y":
+                print("resuming")
+                run=0
+            else:
+                break
+    
 
 
 
-json.dump(likeNames, open("likeNames.txt",'w'))
-json.dump(tagLikes, open("tagLikes.txt",'w'))
-json.dump(total, open("total.txt",'w'))
-json.dump(nxtPress, open("nxtpress.txt",'w'))
+    json.dump(likeNames, open("likeNames.txt",'w'))
+    json.dump(tagLikes, open("tagLikes.txt",'w'))
+    json.dump(total, open("total.txt",'w'))
+    json.dump(nxtPress, open("nxtpress.txt",'w'))
 #
 #
 #
