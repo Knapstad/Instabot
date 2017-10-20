@@ -106,7 +106,7 @@ def liker(total = total, nxtPress = nxtPress):
 
     tottemp= total
     nxtpresstemp = nxtPress
-    while tottemp - total < 20:
+    while tottemp - total < random.randrange(20, 30):
         name = driver.find_element_by_class_name("_eeohz").text
         likeNames.setdefault(name,0)
         likeNames[name] += 1
