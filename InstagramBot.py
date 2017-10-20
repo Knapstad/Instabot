@@ -12,30 +12,60 @@ from selenium import webdriver
 import time
 import json
 import random
-userName = input("Type Username:")
-password = input("Type Password:")
-passkey = "0"
+def getLoginUser():
+    userName = input("Type Username:")
+    return userName
+def getLoginPassword():
+    password = input("Type Password:")
+    return password
+userName = getLoginUser()
+password = getLoginPassword()
+    
+
+
 tags=["brød","surdeig","baking", "sourdough"]
 tag=tags[-1]
-driver = webdriver.Chrome()
-#driver = webdriver.PhantomJS()
-driver.set_window_size(50,50)
+def openBrowser(webDriver):
+    """takes one arg.
+    determins what webdriver to use
+    eg. Chrome, PhantomJS ... Chrome is default
+    """
+    return exec("webdriver." + webDriver + "()")
+
+driver = openBrowser("Chrome")
+driver.set_window_size(1024,700)
 driver.get(url)
+
+def importLogFiles(fileName):
+    return json.load(open(fileName+".txt","r"))
+    
+    
+    
 total = 0
 nxtPress= 0
 likeNames={}
-if len(json.load(open("likeNames.txt","r"))) > 0:
-    likeNames = json.load(open("likeNames.txt","r"))
+if len(importLogFiles("likeNames")) > 0:
+    likeNames = importLogFiles("likeNames")
 tagLikes={}
-if len(json.load(open("taglikes.txt","r"))) > 0:
-    tagLikes = json.load(open("taglikes.txt","r"))
+if len(importLogFiles("tagLikes")) > 0:
+    tagLikes = json.load(open("tagLikes.txt","r"))
+
 total = sum(likeNames.values())
+
 
 
 def login():
     element= driver.find_element_by_class_name("_b93kq")
+    eloc= element.location_once_scrolled_into_view
+    xval= eloc['x']
+    yval= eloc['y']
+    script= "window.scrollTo("+str(xval)+","+str(yval)+");"
+    driver.execute_script(script)
+    
+    
     element.click()
     user=driver.find_element_by_name("username")
+    
     user.send_keys(userName)
     passW=driver.find_element_by_name("password")
     passW.send_keys(password)
@@ -48,6 +78,7 @@ def login():
         keys = input("tast inn kode")
         sec.send_keys(keys)    
         sec.submit()
+        time.sleep(3)
 
 
 def openTag(tag =tag):
@@ -62,7 +93,7 @@ def openTag(tag =tag):
     time.sleep(3)
     driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]').click()
     driver.find_element_by_id("react-root").click()
-#    driver.find_element_by_class_name("_e3il2").click()
+    driver.find_element_by_class_name("_e3il2").click()
     
 #    
 def liker(total = total, nxtPress = nxtPress):
