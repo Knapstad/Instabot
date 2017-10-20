@@ -91,7 +91,13 @@ def openTag(tag =tag):
     time.sleep(3)
     
     time.sleep(3)
-    driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]').click()
+    driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
+    pic= driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
+    plocX=pic.location_once_scrolled_into_view['x'] 
+    plocY=pic.location_once_scrolled_into_view['y']
+    script= "window.scrollTo("+str(plocX)+","+str(plocY)+");"
+    driver.execute_script(script)
+    pic.click()
     driver.find_element_by_id("react-root").click()
     driver.find_element_by_class_name("_e3il2").click()
     
@@ -136,7 +142,7 @@ def liker(total = total, nxtPress = nxtPress):
     for i in likeNames:
         print(i,":", likeNames[i])
     tSleep = random.randrange(850, 950)
-    print("sleeping for", tSleep ,"min")
+    print("sleeping for", tSleep/60 ,"min")
     
     time.sleep(tSleep)
     print("resuming")
