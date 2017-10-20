@@ -141,7 +141,7 @@ def liker(total = total, nxtPress = nxtPress):
     print("Total likes:" , total,"\n","Total next", nxtPress)
     for i in likeNames:
         print(i,":", likeNames[i])
-    tSleep = random.randrange(850, 950)
+    tSleep = random.randrange(600, 950)
     print("sleeping for", tSleep/60 ,"min")
     
     time.sleep(tSleep)
