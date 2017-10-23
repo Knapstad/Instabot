@@ -122,7 +122,7 @@ def liker(total = total, nxtPress = nxtPress):
         nxt = driver.find_element_by_link_text("Next")
         if nxtpresstemp - tottemp > 150:
             break
-        elif name.lower() != userName or like.lower() == "like":
+        elif name.lower() != userName and like.lower() == "like":
             heart.click()
             likeNames.setdefault(name,0)
             likeNames[name] += 1
