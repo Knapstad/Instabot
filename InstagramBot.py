@@ -155,11 +155,12 @@ def liker(total = total, nxtPress = nxtPress):
     while runs < 4:
         if runs == 3:
             run= input("do you want to continue? Y/N")
-            if run.lower() == "y":
-                print("resuming")
-                run=0
-            else:
+            if run.lower() == "n":
                 break
+                
+            else:
+               print("resuming")
+               run=0
         print("resuming")
         liker(total, nxtPress)
     
