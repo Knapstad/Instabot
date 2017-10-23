@@ -25,15 +25,15 @@ password = getLoginPassword()
 
 tags=["brød","surdeig","baking", "sourdough"]
 tag=tags[-1]
-def openBrowser(webDriver):
-    """takes one arg.
-    determins what webdriver to use
-    eg. Chrome, PhantomJS ... Chrome is default
-    """
-    return exec("webdriver." + webDriver + "()")
+##def openBrowser(webDriver):
+#    """takes one arg.
+#    determins what webdriver to use
+#    eg. Chrome, PhantomJS ... Chrome is default
+#    """
+#    #return exec("webdriver." + webDriver + "()")
 
-driver = openBrowser("Chrome")
-driver.set_window_size(1024,700)
+driver = webdriver.Chrome()
+#driver.set_window_size(1024,700)
 driver.get(url)
 
 def importLogFiles(fileName):
@@ -43,7 +43,7 @@ def importLogFiles(fileName):
     
 total = 0
 nxtPress= 0
-if importLogFiles("nxtpress") > 0:
+if sum(importLogFiles("likeNames").values()) > 0:
     likeNames = importLogFiles("likeNames")
 likeNames={}
 if len(importLogFiles("likeNames")) > 0:
@@ -101,8 +101,8 @@ def openTag(tag =tag):
     script= "window.scrollTo("+str(plocX)+","+str(plocY)+");"
     driver.execute_script(script)
     pic.click()
-    driver.find_element_by_id("react-root").click()
-    driver.find_element_by_class_name("_e3il2").click()
+#    driver.find_element_by_id("react-root").click()
+#    driver.find_element_by_class_name("_e3il2").click()
     
 #    
 def liker(total = total, nxtPress = nxtPress):
@@ -112,8 +112,6 @@ def liker(total = total, nxtPress = nxtPress):
     runs= 0
     while tottemp - total < random.randrange(20, 30):
         name = driver.find_element_by_class_name("_eeohz").text
-        likeNames.setdefault(name,0)
-        likeNames[name] += 1
         print(name)
         print("likes:", tottemp - total)
         print("next press:", nxtpresstemp - nxtPress)
@@ -124,7 +122,7 @@ def liker(total = total, nxtPress = nxtPress):
         nxt = driver.find_element_by_link_text("Next")
         if nxtpresstemp - tottemp > 150:
             break
-        elif name.lower() != userName and like.lower() == "like":
+        elif name.lower() != userName or like.lower() == "like":
             heart.click()
             likeNames.setdefault(name,0)
             likeNames[name] += 1
@@ -143,16 +141,18 @@ def liker(total = total, nxtPress = nxtPress):
     total = tottemp
     nxtPress = nxtpresstemp
     print("Total likes:" , total,"\n","Total next", nxtPress)
-    for i in likeNames:
-        print(i,":", likeNames[i])
+    json.dump(likeNames, open("likeNames.txt",'w'))
+    json.dump(tagLikes, open("tagLikes.txt",'w'))
+    json.dump(total, open("total.txt",'w'))
+    json.dump(nxtPress, open("nxtpress.txt",'w'))
+#    for i in likeNames:
+#        print(i,":", likeNames[i])
     runs += 1
     tSleep = random.randrange(600, 950)
-    print("sleeping for", tSleep/60 ,"min")
+    print("sleeping for", round(tSleep/60 ,1),"min")
     
     time.sleep(tSleep)
     while runs < 4:
-        print("resuming")
-        liker(total, nxtPress)
         if runs == 3:
             run= input("do you want to continue? Y/N")
             if run.lower() == "y":
@@ -160,14 +160,16 @@ def liker(total = total, nxtPress = nxtPress):
                 run=0
             else:
                 break
+        print("resuming")
+        liker(total, nxtPress)
     
 
 
 
-    json.dump(likeNames, open("likeNames.txt",'w'))
-    json.dump(tagLikes, open("tagLikes.txt",'w'))
-    json.dump(total, open("total.txt",'w'))
-    json.dump(nxtPress, open("nxtpress.txt",'w'))
+#    json.dump(likeNames, open("likeNames.txt",'w'))
+#    json.dump(tagLikes, open("tagLikes.txt",'w'))
+#    json.dump(total, open("total.txt",'w'))
+#    json.dump(nxtPress, open("nxtpress.txt",'w'))
 #
 #
 #
