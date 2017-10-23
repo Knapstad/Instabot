@@ -151,7 +151,8 @@ def liker(total = total, nxtPress = nxtPress):
     tSleep = random.randrange(600, 950)
     print("sleeping for", round(tSleep/60 ,1),"min")
     
-    time.sleep(tSleep)
+    for i in range(tSleep):
+        time.sleep(1)
     while runs < 4:
         if runs == 3:
             run= input("do you want to continue? Y/N")
