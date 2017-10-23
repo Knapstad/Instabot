@@ -24,7 +24,7 @@ password = getLoginPassword()
 
 
 tags=["brød","surdeig","baking", "sourdough"]
-tag=tags[-1]
+tag=tags[1]
 ##def openBrowser(webDriver):
 #    """takes one arg.
 #    determins what webdriver to use
@@ -120,7 +120,7 @@ def liker(total = total, nxtPress = nxtPress):
         like=driver.find_element_by_xpath("//span[contains(@class,'coreSpriteHeart')]").text
         heart = driver.find_element_by_xpath("//span[contains(@class, 'coreSpriteHeart')]")
         nxt = driver.find_element_by_link_text("Next")
-        if nxtpresstemp - tottemp > 150:
+        if (nxtpresstemp-nxtPress)- (tottemp - total) > 150:
             break
         elif name.lower() != userName and like.lower() == "like":
             heart.click()
