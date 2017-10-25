@@ -43,18 +43,24 @@ def importLogFiles(fileName):
     
 runs= 0
 total = 0
+if importLogFiles("total") > 0:
+    total = importLogFiles("total")
+
 nxtPress= 0
-if sum(importLogFiles("likeNames").values()) > 0:
-    likeNames = importLogFiles("likeNames")
+if importLogFiles("nxtpress") > 0:
+    nxtPress= importLogFiles("nxtpress")
+
+
 likeNames={}
 if len(importLogFiles("likeNames")) > 0:
     likeNames = importLogFiles("likeNames")
+
 tagLikes={}
 if len(importLogFiles("tagLikes")) > 0:
     tagLikes = json.load(open("tagLikes.txt","r"))
     
 
-total = sum(likeNames.values())
+
 
 
 
@@ -112,7 +118,7 @@ def liker(total = total, nxtPress = nxtPress, runs = runs):
     runs=runs
     tottemp= total
     nxtpresstemp = nxtPress
-    while tottemp - total < random.randrange(20, 30):
+    while tottemp - total < random.randrange(15, 50):
         name = driver.find_element_by_class_name("_eeohz").text
         print(name)
         print("likes:", tottemp - total)
@@ -138,11 +144,11 @@ def liker(total = total, nxtPress = nxtPress, runs = runs):
         else:
             nxt.click()    
             nxtpresstemp += 1
-            time.sleep(random.randrange(2, 8))
+            time.sleep(random.randrange(1, 0.5))
     
     total = tottemp
     nxtPress = nxtpresstemp
-    print("Total likes:" , total,"\n","Total next", nxtPress)
+    print("Total likes:" , total,"\n","Total next", nxtPress, "\n" , runs)
     json.dump(likeNames, open("likeNames.txt",'w'))
     json.dump(tagLikes, open("tagLikes.txt",'w'))
     json.dump(total, open("total.txt",'w'))
@@ -156,15 +162,19 @@ def liker(total = total, nxtPress = nxtPress, runs = runs):
     for i in range(tSleep):
         time.sleep(1)
     while runs < 4:
+#        print("check while", runs , "< 4")
         if runs == 3:
+#            print("runs == 3", runs)
             run= input("do you want to continue? Y/N")
             if run.lower() == "n":
+                runs = 5
                 break
                 
             else:
-               run=0
+#                print("run else user input 'Y'")
+                runs=0
         print("resuming")
-        liker(total, nxtPress)
+        liker(total, nxtPress, runs)
 
 
 
@@ -185,7 +195,7 @@ def loadCookies():
 #    json.dump(nxtPress, open("nxtpress.txt",'w'))
 #
 #
-#
+
 #
 #test = json.load(open("tagLikes.txt","r"))
 #
