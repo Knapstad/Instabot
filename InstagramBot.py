@@ -12,6 +12,7 @@ from selenium import webdriver
 import time
 import json
 import random
+import pickle
 def getLoginUser():
     userName = input("Type Username:")
     return userName
@@ -24,7 +25,7 @@ password = getLoginPassword()
 
 
 tags=["brød","surdeig","baking", "sourdough"]
-tag=tags[1]
+tag=tags[2]
 ##def openBrowser(webDriver):
 #    """takes one arg.
 #    determins what webdriver to use
@@ -40,7 +41,7 @@ def importLogFiles(fileName):
     return json.load(open(fileName+".txt","r"))
     
     
-    
+runs= 0
 total = 0
 nxtPress= 0
 if sum(importLogFiles("likeNames").values()) > 0:
@@ -85,6 +86,8 @@ def login():
 
 
 def openTag(tag =tag):
+    """Opens the tag page and finds the first window
+    """
     tag=tag
 #    from selenium.webdriver.common.by import By
 #    from selenium.webdriver.support.ui import WebDriverWait
@@ -94,7 +97,7 @@ def openTag(tag =tag):
     time.sleep(3)
     
     time.sleep(3)
-    driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
+   # driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
     pic= driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
     plocX=pic.location_once_scrolled_into_view['x'] 
     plocY=pic.location_once_scrolled_into_view['y']
@@ -105,11 +108,10 @@ def openTag(tag =tag):
 #    driver.find_element_by_class_name("_e3il2").click()
     
 #    
-def liker(total = total, nxtPress = nxtPress):
-
+def liker(total = total, nxtPress = nxtPress, runs = runs):
+    runs=runs
     tottemp= total
     nxtpresstemp = nxtPress
-    runs= 0
     while tottemp - total < random.randrange(20, 30):
         name = driver.find_element_by_class_name("_eeohz").text
         print(name)
@@ -160,12 +162,21 @@ def liker(total = total, nxtPress = nxtPress):
                 break
                 
             else:
-               print("resuming")
                run=0
         print("resuming")
         liker(total, nxtPress)
-    
 
+
+
+def saveCookies():
+    """Saves cookies to file"""
+    pickle.dump( driver.get_cookies() , open("cookies.pkl","wb"))
+
+def loadCookies():
+    """loads saved Cookies from file"""
+    cookies = pickle.load(open("cookies.pkl", "rb"))
+    for cookie in cookies:
+        driver.add_cookie(cookie)
 
 
 #    json.dump(likeNames, open("likeNames.txt",'w'))
