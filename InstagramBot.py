@@ -19,13 +19,32 @@ def getLoginUser():
 def getLoginPassword():
     password = input("Type Password:")
     return password
+def loadCookies():
+    """loads saved Cookies from file"""
+    try:
+        cookies = pickle.load(open("cookies.pkl", "rb"))
+        for cookie in cookies:
+            driver.add_cookie(cookie)
+        print("cookies loaded")
+    except FileNotFoundError:
+        print("no cookies found")
+    
+        
+def saveCookies():
+    """Saves cookies to file"""
+    pickle.dump( driver.get_cookies() , open("cookies.pkl","wb"))
+    
+def importLogFiles(fileName):
+    """ Takes one argument 'filename' and loads that file"""
+    return json.load(open(fileName+".txt","r"))
+
 userName = getLoginUser()
 password = getLoginPassword()
     
 
 
-tags=["brød","surdeig","baking", "sourdough"]
-tag=tags[2]
+tags=["brød","surdeig","baking", "sourdough", "realbread","artisanbread"]
+tag=tags[random.randrange(0,len(tags)-1)]
 ##def openBrowser(webDriver):
 #    """takes one arg.
 #    determins what webdriver to use
@@ -36,9 +55,10 @@ tag=tags[2]
 driver = webdriver.Chrome()
 #driver.set_window_size(1024,700)
 driver.get(url)
+loadCookies()
 
-def importLogFiles(fileName):
-    return json.load(open(fileName+".txt","r"))
+
+
     
     
 runs= 0
@@ -89,7 +109,8 @@ def login():
         sec.send_keys(keys)    
         sec.submit()
         time.sleep(3)
-
+    while len(driver.find_elements_by_id("slfErrorAlert")) > 0:
+        driver.refresh()
 
 def openTag(tag =tag):
     """Opens the tag page and finds the first window
@@ -114,7 +135,8 @@ def openTag(tag =tag):
 #    driver.find_element_by_class_name("_e3il2").click()
     
 #    
-def liker(total = total, nxtPress = nxtPress, runs = runs):
+def liker(total = total, nxtPress = nxtPress, runs = runs, thisrunlikes = 0):
+    thisrunlikes=thisrunlikes
     runs=runs
     tottemp= total
     nxtpresstemp = nxtPress
@@ -137,6 +159,7 @@ def liker(total = total, nxtPress = nxtPress, runs = runs):
             tagLikes.setdefault(tag,0)
             tagLikes[tag]+=1
             tottemp += 1
+            thisrunlikes+=1
             nxt.click()
             nxtpresstemp += 1
             time.sleep(random.randrange(2, 8))
@@ -148,7 +171,7 @@ def liker(total = total, nxtPress = nxtPress, runs = runs):
     
     total = tottemp
     nxtPress = nxtpresstemp
-    print("Total likes:" , total,"\n","Total next", nxtPress, "\n" , runs)
+    print("Total likes:" , total,"\n","Total next", nxtPress, "\n" , "runs: ", runs, "\n", "likes this run:", thisrunlikes )
     json.dump(likeNames, open("likeNames.txt",'w'))
     json.dump(tagLikes, open("tagLikes.txt",'w'))
     json.dump(total, open("total.txt",'w'))
@@ -174,19 +197,12 @@ def liker(total = total, nxtPress = nxtPress, runs = runs):
 #                print("run else user input 'Y'")
                 runs=0
         print("resuming")
-        liker(total, nxtPress, runs)
+        liker(total, nxtPress, runs, thisrunlikes)
 
 
 
-def saveCookies():
-    """Saves cookies to file"""
-    pickle.dump( driver.get_cookies() , open("cookies.pkl","wb"))
 
-def loadCookies():
-    """loads saved Cookies from file"""
-    cookies = pickle.load(open("cookies.pkl", "rb"))
-    for cookie in cookies:
-        driver.add_cookie(cookie)
+
 
 
 #    json.dump(likeNames, open("likeNames.txt",'w'))
