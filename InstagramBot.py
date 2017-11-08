@@ -9,10 +9,16 @@ url="https://instagram.com"
 #import requests
 #from robobrowser import RoboBrowser'
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 import json
 import random
 import pickle
+
+
+
 def getLoginUser():
     userName = input("Type Username:")
     return userName
@@ -43,7 +49,7 @@ password = getLoginPassword()
     
 
 
-tags=["brød","surdeig","baking", "sourdough", "realbread","artisanbread"]
+tags=["brød","surdeig","baking", "sourdough", "realbread","artisanbread","matprat","nrkmat","bread"]
 tag=tags[random.randrange(0,len(tags)-1)]
 ##def openBrowser(webDriver):
 #    """takes one arg.
@@ -52,10 +58,18 @@ tag=tags[random.randrange(0,len(tags)-1)]
 #    """
 #    #return exec("webdriver." + webDriver + "()")
 
-driver = webdriver.Chrome()
+#driver = webdriver.Chrome()
+options = webdriver.ChromeOptions()
+options.add_argument('headless')
+
+driver = webdriver.Chrome(chrome_options=options)
+       
+
 #driver.set_window_size(1024,700)
 driver.get(url)
 loadCookies()
+driver.refresh()
+
 
 
 
@@ -84,8 +98,13 @@ if len(importLogFiles("tagLikes")) > 0:
 
 
 
+
+
 def login():
     element= driver.find_element_by_class_name("_b93kq")
+    #print(driver.page_source)
+    
+    
     eloc= element.location_once_scrolled_into_view
     xval= eloc['x']
     yval= eloc['y']
@@ -112,17 +131,22 @@ def login():
     while len(driver.find_elements_by_id("slfErrorAlert")) > 0:
         driver.refresh()
 
-def openTag(tag =tag):
+
+
+
+
+
+def openTag(tag = tag):
     """Opens the tag page and finds the first window
     """
-    tag=tag
+    
 #    from selenium.webdriver.common.by import By
 #    from selenium.webdriver.support.ui import WebDriverWait
 #    from selenium.webdriver.support import expected_conditions as EC  
-    
+    print("opening tag:", tag)
     driver.get(url+"/explore/tags/"+tag)
     time.sleep(3)
-    
+    print("opened", driver.current_url)
     time.sleep(3)
    # driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
     pic= driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
@@ -135,19 +159,24 @@ def openTag(tag =tag):
 #    driver.find_element_by_class_name("_e3il2").click()
     
 #    
-def liker(total = total, nxtPress = nxtPress, runs = runs, thisrunlikes = 0):
+def liker( runs = runs, thisrunlikes = 0, numberofruns = 3, tag=tag):
+    global total
+    global nxtPress
     thisrunlikes=thisrunlikes
     runs=runs
     tottemp= total
     nxtpresstemp = nxtPress
-    while tottemp - total < random.randrange(15, 50):
+    while tottemp - total < random.randrange(20, 60):
+        driver.implicitly_wait(2)
         name = driver.find_element_by_class_name("_eeohz").text
         print(name)
         print("likes:", tottemp - total)
         print("next press:", nxtpresstemp - nxtPress)
         
         #driver.find_element_by_class_name("_si7dy").click()
+        WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.XPATH, "//span[contains(@class,'coreSpriteHeart')]")))
         like=driver.find_element_by_xpath("//span[contains(@class,'coreSpriteHeart')]").text
+               
         heart = driver.find_element_by_xpath("//span[contains(@class, 'coreSpriteHeart')]")
         nxt = driver.find_element_by_link_text("Next")
         if (nxtpresstemp-nxtPress)- (tottemp - total) > 150:
@@ -165,9 +194,10 @@ def liker(total = total, nxtPress = nxtPress, runs = runs, thisrunlikes = 0):
             time.sleep(random.randrange(2, 8))
         
         else:
+            time.sleep(0.5)
             nxt.click()    
             nxtpresstemp += 1
-            time.sleep(random.randrange(1, 0.5))
+            
     
     total = tottemp
     nxtPress = nxtpresstemp
@@ -184,20 +214,33 @@ def liker(total = total, nxtPress = nxtPress, runs = runs, thisrunlikes = 0):
     
     for i in range(tSleep):
         time.sleep(1)
-    while runs < 4:
+    while runs < numberofruns +1 :
 #        print("check while", runs , "< 4")
-        if runs == 3:
+        if runs == numberofruns:
 #            print("runs == 3", runs)
-            run= input("do you want to continue? Y/N")
+            run= input("do you want to continue? Y/N/T")
             if run.lower() == "n":
-                runs = 5
-                break
-                
+                return("Aborted")
+            elif run.lower()== "t":
+                ntag=tags[random.randrange(0,len(tags)-1)]
+                while ntag == tag:
+                   ntag=tags[random.randrange(0,len(tags)-1)]
+                tag=ntag       
+                openTag(tag)
+                WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.CLASS_NAME, "_eeohz")))
+                                
             else:
-#                print("run else user input 'Y'")
-                runs=0
+               runs=0
+        elif runs == 4:
+            ntag=tags[random.randrange(0,len(tags)-1)]
+            while ntag == tag:
+                   ntag=tags[random.randrange(0,len(tags)-1)]
+            tag=ntag       
+            openTag(tag)
+            WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.CLASS_NAME, "_eeohz")))
+            
         print("resuming")
-        liker(total, nxtPress, runs, thisrunlikes)
+        liker(runs, thisrunlikes, numberofruns, tag)
 
 
 
