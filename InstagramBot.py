@@ -61,6 +61,7 @@ tag=tags[random.randrange(0,len(tags)-1)]
 #driver = webdriver.Chrome()
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
+options.add_argument('--window-size=1920,1080')
 
 driver = webdriver.Chrome(chrome_options=options)
        
@@ -149,49 +150,96 @@ def openTag(tag = tag):
     print("opened", driver.current_url)
     time.sleep(3)
    # driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
-    pic= driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
-    plocX=pic.location_once_scrolled_into_view['x'] 
-    plocY=pic.location_once_scrolled_into_view['y']
-    script= "window.scrollTo("+str(plocX)+","+str(plocY)+");"
-    driver.execute_script(script)
-    pic.click()
+    try:
+           pic= driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
+           plocX=pic.location_once_scrolled_into_view['x'] 
+           plocY=pic.location_once_scrolled_into_view['y']
+           script= "window.scrollTo("+str(plocX)+","+str(plocY)+");"
+           driver.execute_script(script)
+           pic.click()
+    except:
+           pic= driver.find_element_by_xpath('//*[@id="react-root"]/section/main/article/div[2]/div[1]/div[1]/div[1]')
+           plocX=pic.location_once_scrolled_into_view['x'] 
+           plocY=pic.location_once_scrolled_into_view['y']
+           script= "window.scrollTo("+str(plocX)+","+str(plocY)+");"
+           driver.execute_script(script)
+           pic.click()
 #    driver.find_element_by_id("react-root").click()
 #    driver.find_element_by_class_name("_e3il2").click()
     
 #    
-def liker( runs = runs, thisrunlikes = 0, numberofruns = 3, tag=tag):
+def liker( runs = runs, thisrunlikes = 0, numberofruns = 3, change=3):
     global total
     global nxtPress
+    global tag
     thisrunlikes=thisrunlikes
     runs=runs
     tottemp= total
     nxtpresstemp = nxtPress
     while tottemp - total < random.randrange(20, 60):
         driver.implicitly_wait(2)
-        name = driver.find_element_by_class_name("_eeohz").text
-        print(name)
-        print("likes:", tottemp - total)
-        print("next press:", nxtpresstemp - nxtPress)
+        try:
+               name = driver.find_element_by_class_name("_eeohz").text
+               print(name)
+               print("likes:", tottemp - total)
+               print("next press:", nxtpresstemp - nxtPress)
+        except:
+               driver.implicitly_wait(2)
+               name = driver.find_element_by_class_name("_eeohz").text
+               print(name)
+               print("likes:", tottemp - total)
+               print("next press:", nxtpresstemp - nxtPress)
+               
         
         #driver.find_element_by_class_name("_si7dy").click()
         WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.XPATH, "//span[contains(@class,'coreSpriteHeart')]")))
-        like=driver.find_element_by_xpath("//span[contains(@class,'coreSpriteHeart')]").text
-               
-        heart = driver.find_element_by_xpath("//span[contains(@class, 'coreSpriteHeart')]")
-        nxt = driver.find_element_by_link_text("Next")
+        try:
+               like=driver.find_element_by_xpath("//span[contains(@class,'coreSpriteHeart')]").text
+               heart = driver.find_element_by_xpath("//span[contains(@class, 'coreSpriteHeart')]")
+               nxt = driver.find_element_by_link_text("Next")
+        except:
+              time.sleep(0.5)
+              like=driver.find_element_by_xpath("//span[contains(@class,'coreSpriteHeart')]").text
+              heart = driver.find_element_by_xpath("//span[contains(@class, 'coreSpriteHeart')]")
+              nxt = driver.find_element_by_link_text("Next")
+        
+        
         if (nxtpresstemp-nxtPress)- (tottemp - total) > 150:
+            ntag=tags[random.randrange(0,len(tags)-1)]
+            while ntag == tag:
+                  ntag=tags[random.randrange(0,len(tags)-1)]
+            tag = ntag
+            openTag(tag)
+            WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.CLASS_NAME, "_eeohz")))
             break
         elif name.lower() != userName and like.lower() == "like":
-            heart.click()
-            likeNames.setdefault(name,0)
-            likeNames[name] += 1
-            tagLikes.setdefault(tag,0)
-            tagLikes[tag]+=1
-            tottemp += 1
-            thisrunlikes+=1
-            nxt.click()
-            nxtpresstemp += 1
-            time.sleep(random.randrange(2, 8))
+            try:
+            
+                   heart.click()
+                   likeNames.setdefault(name,0)
+                   likeNames[name] += 1
+                   tagLikes.setdefault(tag,0)
+                   tagLikes[tag]+=1
+                   tottemp += 1
+                   thisrunlikes+=1
+                   nxt.click()
+                   nxtpresstemp += 1
+                   time.sleep(random.randrange(2, 8))
+                   
+            except:
+                   like=driver.find_element_by_xpath("//span[contains(@class,'coreSpriteHeart')]").text
+                   heart = driver.find_element_by_xpath("//span[contains(@class, 'coreSpriteHeart')]")
+                   nxt = driver.find_element_by_link_text("Next")
+                   heart.click()
+                   likeNames.setdefault(name,0)
+                   likeNames[name] += 1
+                   tagLikes.setdefault(tag,0)
+                   tagLikes[tag]+=1
+                   tottemp += 1
+                   thisrunlikes+=1
+                   nxt.click()
+                   nxtpresstemp += 1
+                   time.sleep(random.randrange(2, 8))
         
         else:
             time.sleep(0.5)
@@ -231,7 +279,7 @@ def liker( runs = runs, thisrunlikes = 0, numberofruns = 3, tag=tag):
                                 
             else:
                runs=0
-        elif runs == 4:
+        elif int(runs) % int(change)== 0:
             ntag=tags[random.randrange(0,len(tags)-1)]
             while ntag == tag:
                    ntag=tags[random.randrange(0,len(tags)-1)]
@@ -240,7 +288,7 @@ def liker( runs = runs, thisrunlikes = 0, numberofruns = 3, tag=tag):
             WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.CLASS_NAME, "_eeohz")))
             
         print("resuming")
-        liker(runs, thisrunlikes, numberofruns, tag)
+        liker(runs, thisrunlikes)
 
 
 
