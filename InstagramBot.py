@@ -16,7 +16,9 @@ import time
 import json
 import random
 import pickle
+import os
 
+os.chdir("z://Documents/Script/instabot")
 
 
 def getLoginUser():
@@ -286,9 +288,9 @@ def liker( runs = runs, thisrunlikes = 0, numberofruns = 3, change=3):
             tag=ntag       
             openTag(tag)
             WebDriverWait(driver,10).until(EC.visibility_of_element_located((By.CLASS_NAME, "_eeohz")))
-            
+           
         print("resuming")
-        liker(runs, thisrunlikes)
+        liker(runs, thisrunlikes, numberofruns)
 
 
 
