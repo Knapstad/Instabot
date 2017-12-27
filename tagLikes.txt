@@ -1,1 +1,1 @@
-{"br\u00f8d": 1369, "sourdough": 1249, "oslove": 60, "surdeig": 591, "baking": 842, "realbread": 1314, "nrkmat": 302, "artisanbread": 663, "matprat": 399}
+{"br\u00f8d": 1369, "sourdough": 1249, "oslove": 60, "surdeig": 591, "baking": 948, "realbread": 1314, "nrkmat": 302, "artisanbread": 663, "matprat": 399}

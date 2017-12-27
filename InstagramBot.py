@@ -13,6 +13,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+import datetime
 import json
 import random
 import pickle
@@ -260,7 +261,7 @@ def liker( runs = runs, thisrunlikes = 0, numberofruns = 3, change=3):
 #        print(i,":", likeNames[i])
     runs += 1
     tSleep = random.randrange(600, 950)
-    print("sleeping for", round(tSleep/60 ,1),"min")
+    print("sleeping for", round(tSleep/60 ,1),"min", datetime.now().hour+":"+ datetime.now().minute)
     
     for i in range(tSleep):
         time.sleep(1)
